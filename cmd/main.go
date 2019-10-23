@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"fwu-server/internal/config"
 	"io"
 	"net"
 	"os"
@@ -26,7 +27,7 @@ func fillString(retunString string, toLength int) string {
 
 func sendFileToClient(connection net.Conn) {
 
-	fmt.Println("A client has connected!")
+	fmt.Println("[  OK  ] A client has connected!")
 
 	defer connection.Close()
 	file, err := os.Open("example.bin")
@@ -43,11 +44,11 @@ func sendFileToClient(connection net.Conn) {
 
 	fileSize := fillString(strconv.FormatInt(fileInfo.Size(), 10), 10)
 	fileName := fillString(fileInfo.Name(), 64)
-	fmt.Println("Sending filename and filesize!")
+	fmt.Println("[  OK  ] Sending filename and filesize!")
 	connection.Write([]byte(fileSize))
 	connection.Write([]byte(fileName))
 	sendBuffer := make([]byte, BUFFERSIZE)
-	fmt.Println("Start sending file!")
+	fmt.Println("[  OK  ] Start sending file!")
 
 	for {
 		_, err = file.Read(sendBuffer)
@@ -62,10 +63,13 @@ func sendFileToClient(connection net.Conn) {
 
 func main() {
 
-	fmt.Println("Starting server ...")
+	// Read config yaml
+	conf := config.NewConfig("config.yml")
+
+	fmt.Println("[  OK  ] Starting server ...")
 
 	//listen interfaces
-	server, err := net.Listen("tcp", ":8081")
+	server, err := net.Listen(conf.NetworkType, conf.NetworkPort)
 	if err != nil {
 		log.Error().Err(err).Msg("")
 		os.Exit(1)
@@ -80,7 +84,7 @@ func main() {
 			os.Exit(1)
 		}
 
-		fmt.Println("Client connected")
+		fmt.Println("[  OK  ] Client connected")
 		go sendFileToClient(connection)
 	}
 }
