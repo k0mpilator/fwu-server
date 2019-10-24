@@ -1,10 +1,4 @@
----
-# firmware location
-firmware: "source/tmp/deploy/images/yourFile.img"
-
-# announces on the local network address
-net: "tcp"
-
-# used to discover the chosen port
-port: ":8081"
+firmware: core-image-minimal-xxxxxxxx-xxxx-2019xxxxxxxxxx.rootfs.ubifs
+net: tcp
+port: :8081
 
